@@ -4,12 +4,11 @@ import com.springboot.blog.DTO.PostDTO;
 import com.springboot.blog.DTO.PostResponse;
 import com.springboot.blog.Exception.ResourceNotFoundException;
 import com.springboot.blog.Service.PostService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.springboot.blog.Utils.ApplicationConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -26,10 +25,11 @@ public class PostController
         return new ResponseEntity<>(postService.createPost(postDTO),HttpStatus.CREATED);
     }
     @GetMapping("/posts")
-    public PostResponse getAllPosts(@RequestParam(value = "pageNo",defaultValue = "0",required = false) int pageNo
-            , @RequestParam(value = "pageSize",defaultValue = "10",required = false) int pageSize,@RequestParam(value = "sortBy",defaultValue = "id",required = false) String sortBy)
+    public PostResponse getAllPosts(@RequestParam(value = "pageNo",defaultValue = ApplicationConstants.DEFAULT_PAGE_NUMBER,required = false) int pageNo
+            , @RequestParam(value = "pageSize",defaultValue = ApplicationConstants.DEFAULT_PAGE_SIZE,required = false) int pageSize,@RequestParam(value = "sortBy",defaultValue = ApplicationConstants.DEFAULT_SORT_BY,required = false) String sortBy,
+                                    @RequestParam (value = "sortDir",defaultValue =ApplicationConstants.DEFAULT_SORT_DIRECTION,required = false) String sortDir )
     {
-        return postService.getAllPosts(pageNo,pageSize,sortBy);
+        return postService.getAllPosts(pageNo,pageSize,sortBy,sortDir);
     }
     @GetMapping("/posts/{id}")
     public ResponseEntity<PostDTO>getById(@PathVariable long id) throws ResourceNotFoundException {
