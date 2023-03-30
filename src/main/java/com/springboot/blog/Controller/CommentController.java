@@ -1,6 +1,7 @@
 package com.springboot.blog.Controller;
 
 import com.springboot.blog.DTO.CommentDTO;
+import com.springboot.blog.Exception.BlogAPIException;
 import com.springboot.blog.Exception.ResourceNotFoundException;
 import com.springboot.blog.Service.CommentService;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,11 @@ public class CommentController
     public List<CommentDTO> getCommentsByPostId(@PathVariable Long postId)
     {
         return commentService.getCommentsByPostId(postId);
+    }
+    @PutMapping("/posts/{postsId}/comments/{id}")
+        public ResponseEntity<CommentDTO>updatedComment(@PathVariable Long postId,@PathVariable Long commentId,@RequestBody CommentDTO commentDTO) throws BlogAPIException, ResourceNotFoundException {
+       CommentDTO updatedComment= commentService.updateComment(postId,commentId,commentDTO);
+        return new ResponseEntity<>(updatedComment,HttpStatus.OK);
     }
 }
 
