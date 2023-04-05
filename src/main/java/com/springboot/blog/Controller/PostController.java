@@ -25,6 +25,7 @@ public class PostController
     public ResponseEntity<PostDTO> createPost(@Valid @RequestBody PostDTO postDTO)
     {
         return new ResponseEntity<>(postService.createPost(postDTO),HttpStatus.CREATED);
+
     }
     @GetMapping("/posts")
     public PostResponse getAllPosts(@RequestParam(value = "pageNo",defaultValue = ApplicationConstants.DEFAULT_PAGE_NUMBER,required = false) int pageNo
