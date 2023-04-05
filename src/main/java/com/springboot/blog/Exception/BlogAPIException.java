@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public class BlogAPIException extends Exception
 {
- private HttpStatus status;
+ private final HttpStatus status;
  private String message;
 
     public BlogAPIException(HttpStatus status, String message)

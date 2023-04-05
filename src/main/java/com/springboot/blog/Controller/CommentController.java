@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("/api/")
 public class CommentController
 {
-    private CommentService commentService;
+    private final CommentService commentService;
 
     public CommentController(CommentService commentService) {
         this.commentService = commentService;
@@ -32,6 +32,10 @@ public class CommentController
         public ResponseEntity<CommentDTO>updatedComment(@PathVariable Long postId,@PathVariable Long commentId,@RequestBody CommentDTO commentDTO) throws BlogAPIException, ResourceNotFoundException {
        CommentDTO updatedComment= commentService.updateComment(postId,commentId,commentDTO);
         return new ResponseEntity<>(updatedComment,HttpStatus.OK);
+    }
+    @DeleteMapping("/posts/{postId}/comment/{commentId}")
+    public void deleteComment(@PathVariable long commentId,@PathVariable long postId) throws BlogAPIException, ResourceNotFoundException {
+        commentService.deletedComment(postId,commentId);
     }
 }
 

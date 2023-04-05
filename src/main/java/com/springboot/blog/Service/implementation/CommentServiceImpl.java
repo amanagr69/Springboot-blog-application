@@ -8,6 +8,8 @@ import com.springboot.blog.Exception.ResourceNotFoundException;
 import com.springboot.blog.Repository.CommentRepository;
 import com.springboot.blog.Repository.PostRepository;
 import com.springboot.blog.Service.CommentService;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,8 @@ public class CommentServiceImpl implements CommentService
 {
     private CommentRepository commentRepository;
     private PostRepository postRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
     public CommentServiceImpl(CommentRepository commentRepository ,PostRepository postRepository) {
         this.commentRepository = commentRepository;
@@ -56,22 +60,37 @@ public class CommentServiceImpl implements CommentService
         return mapToDTO(updatedComment);
     }
 
+    @Override
+    public void deletedComment(long postId, long commentId) throws ResourceNotFoundException, BlogAPIException {
+        Post post=postRepository.findById(postId).orElseThrow(()->new ResourceNotFoundException("post","id",postId));
+        Comment comment=commentRepository.findById(commentId).orElseThrow(()->new ResourceNotFoundException("comment","id",commentId));
+        if(!comment.getPost().getId().equals(post.getId()))
+        {
+            throw new BlogAPIException(HttpStatus.BAD_GATEWAY,"Comment doesn't belong to the post");
+        }
+        else
+        {
+           commentRepository.delete(comment);
+        }
+
+    }
+
     private CommentDTO mapToDTO(Comment comment)
     {
-        CommentDTO commentDTO=new CommentDTO();
-        commentDTO.setId(comment.getId());
-        commentDTO.setName(comment.getName());
-        commentDTO.setEmail(comment.getEmail());
-        commentDTO.setBody(comment.getBody());
+        CommentDTO commentDTO=modelMapper.map(comment, CommentDTO.class);
+//        commentDTO.setId(comment.getId());
+//        commentDTO.setName(comment.getName());
+//        commentDTO.setEmail(comment.getEmail());
+//        commentDTO.setBody(comment.getBody());
         return commentDTO;
     }
     private Comment mapToEntity(CommentDTO commentDTO)
     {
-        Comment comment=new Comment();
-        comment.setId(commentDTO.getId());
-        comment.setBody(commentDTO.getBody());
-        comment.setEmail(commentDTO.getEmail());
-        comment.setName(commentDTO.getName());
+        Comment comment=modelMapper.map(commentDTO,Comment.class);
+//        comment.setId(commentDTO.getId());
+//        comment.setBody(commentDTO.getBody());
+//        comment.setEmail(commentDTO.getEmail());
+//        comment.setName(commentDTO.getName());
         return comment;
     }
 }
