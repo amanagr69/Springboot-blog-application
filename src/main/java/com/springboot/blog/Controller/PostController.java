@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 
 @RestController
 @RequestMapping("/api")
@@ -20,7 +22,7 @@ public class PostController
         this.postService = postService;
     }
     @PostMapping
-    public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO)
+    public ResponseEntity<PostDTO> createPost(@Valid @RequestBody PostDTO postDTO)
     {
         return new ResponseEntity<>(postService.createPost(postDTO),HttpStatus.CREATED);
     }
@@ -36,7 +38,7 @@ public class PostController
         return ResponseEntity.ok(postService.getPostById(id));
     }
     @PutMapping("/update/{id}")
-    public ResponseEntity<PostDTO>updatePost(@RequestBody PostDTO postDTO, @PathVariable long id) throws ResourceNotFoundException {
+    public ResponseEntity<PostDTO>updatePost(@Valid @RequestBody PostDTO postDTO, @PathVariable long id) throws ResourceNotFoundException {
       PostDTO response=postService.updatePosts(postDTO,id);
       return new ResponseEntity<>(response,HttpStatus.OK);
 

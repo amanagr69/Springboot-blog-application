@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 @Service
 public class CommentServiceImpl implements CommentService
 {
-    private CommentRepository commentRepository;
-    private PostRepository postRepository;
+    private final CommentRepository commentRepository;
+    private final PostRepository postRepository;
     @Autowired
     private ModelMapper modelMapper;
 
@@ -32,7 +32,7 @@ public class CommentServiceImpl implements CommentService
     @Override
     public List<CommentDTO> getCommentsByPostId(long postId) {
         List<Comment> comments=commentRepository.findCommentByPostId(postId);
-        return comments.stream().map(comment -> mapToDTO(comment)).collect(Collectors.toList());
+        return comments.stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -78,6 +78,7 @@ public class CommentServiceImpl implements CommentService
     private CommentDTO mapToDTO(Comment comment)
     {
         CommentDTO commentDTO=modelMapper.map(comment, CommentDTO.class);
+//        CommentDTO commentDTO=new CommentDTO()
 //        commentDTO.setId(comment.getId());
 //        commentDTO.setName(comment.getName());
 //        commentDTO.setEmail(comment.getEmail());
@@ -87,6 +88,7 @@ public class CommentServiceImpl implements CommentService
     private Comment mapToEntity(CommentDTO commentDTO)
     {
         Comment comment=modelMapper.map(commentDTO,Comment.class);
+//        Comment comment=new comment;
 //        comment.setId(commentDTO.getId());
 //        comment.setBody(commentDTO.getBody());
 //        comment.setEmail(commentDTO.getEmail());
