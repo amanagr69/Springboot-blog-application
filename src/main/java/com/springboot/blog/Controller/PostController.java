@@ -7,6 +7,7 @@ import com.springboot.blog.Service.PostService;
 import com.springboot.blog.Utils.ApplicationConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -21,6 +22,7 @@ public class PostController
     public PostController(PostService postService) {
         this.postService = postService;
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<PostDTO> createPost(@Valid @RequestBody PostDTO postDTO)
     {
@@ -38,12 +40,14 @@ public class PostController
     public ResponseEntity<PostDTO>getById(@PathVariable long id) throws ResourceNotFoundException {
         return ResponseEntity.ok(postService.getPostById(id));
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/update/{id}")
     public ResponseEntity<PostDTO>updatePost(@Valid @RequestBody PostDTO postDTO, @PathVariable long id) throws ResourceNotFoundException {
       PostDTO response=postService.updatePosts(postDTO,id);
       return new ResponseEntity<>(response,HttpStatus.OK);
 
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deletePost(@PathVariable long id) throws ResourceNotFoundException {
        postService.deletePost(id);
