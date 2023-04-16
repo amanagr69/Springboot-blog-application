@@ -1,10 +1,11 @@
 package com.springboot.blog.Security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import com.springboot.blog.Exception.BlogAPIException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -41,12 +42,30 @@ public class JwtTokenProvider
     public String getUsername(String token)
     {
         Claims claims=Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJwt(token).getBody();
-        String username= claims.getSubject();
+        String username;
+        username = claims.getSubject();
         return username;
     }
-    public Boolean validateToken(String token)
-    {
-        Jwts.parserBuilder().setSigningKey(key()).build().parse(token);
-        return true;
+    public Boolean validateToken(String token) throws BlogAPIException {
+        try{
+            Jwts.parserBuilder().setSigningKey(key()).build().parse(token);
+            return true;
+        }
+        catch (MalformedJwtException e)
+        {
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST,"Invalid jwt");
+        } catch (ExpiredJwtException e)
+        {
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST,"Jwt expired");
+        }
+        catch (UnsupportedJwtException e)
+        {
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST,"Jwt unsupported");
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST,"Jwt string is empty");
+        }
+
     }
 }
